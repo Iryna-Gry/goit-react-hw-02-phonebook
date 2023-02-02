@@ -17,7 +17,9 @@ export class App extends Component {
     contacts: INTIAL_VALUE,
     filter: '',
   };
-
+  handleSearchInput = event => {
+    this.setState({ filter: event.currentTarget.value });
+  };
   handleFormSubmit = ({ name, number }) => {
     this.setState(prevState => {
       return {
@@ -27,6 +29,10 @@ export class App extends Component {
     });
   };
   render() {
+    const normalisedFilter = this.state.filter.toLowerCase();
+    const filteredContacts = this.state.contacts.filter(item =>
+      item.name.toLowerCase().includes(normalisedFilter)
+    );
     return (
       <Container>
         <Section title="Add contact" className="section aside">
@@ -34,8 +40,11 @@ export class App extends Component {
         </Section>
 
         <Section title="Contact List" className="section">
-          <SearchInput></SearchInput>
-          <ContactList contactData={this.state.contacts}></ContactList>
+          <SearchInput
+            value={this.state.filter}
+            onChange={this.handleSearchInput}
+          ></SearchInput>
+          <ContactList contactData={filteredContacts}></ContactList>
         </Section>
       </Container>
     );
