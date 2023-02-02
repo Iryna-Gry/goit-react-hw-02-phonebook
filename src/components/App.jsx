@@ -22,10 +22,19 @@ export class App extends Component {
   };
   handleFormSubmit = ({ name, number }) => {
     this.setState(prevState => {
-      return {
-        ...prevState,
-        contacts: [...prevState.contacts, { id: nanoid(), name, number }],
-      };
+      if (prevState.contacts.filter(item => item.name === name)[0]) {
+        alert(`${name} is already in contacts`);
+      } else {
+        return {
+          ...prevState,
+          contacts: [...prevState.contacts, { id: nanoid(), name, number }],
+        };
+      }
+    });
+  };
+  deleteContact = id => {
+    this.setState({
+      contacts: this.state.contacts.filter(item => item.id !== id),
     });
   };
   render() {
@@ -35,16 +44,19 @@ export class App extends Component {
     );
     return (
       <Container>
-        <Section title="Add contact" className="section aside">
+        <Section title="Add contact" className="aside">
           <Form onFormSubmit={this.handleFormSubmit}></Form>
         </Section>
 
-        <Section title="Contact List" className="section">
+        <Section title="Contact List">
           <SearchInput
             value={this.state.filter}
             onChange={this.handleSearchInput}
           ></SearchInput>
-          <ContactList contactData={filteredContacts}></ContactList>
+          <ContactList
+            contactData={filteredContacts}
+            deleteContact={this.deleteContact}
+          ></ContactList>
         </Section>
       </Container>
     );
