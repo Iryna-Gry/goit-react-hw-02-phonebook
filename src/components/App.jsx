@@ -22,15 +22,26 @@ export class App extends Component {
   };
   handleFormSubmit = ({ name, number }) => {
     this.setState(prevState => {
-      if (prevState.contacts.filter(item => item.name === name)[0]) {
+      if (
+        prevState.contacts.some(
+          item => item.name.toLowerCase() === name.toLowerCase()
+        )
+      ) {
         alert(`${name} is already in contacts`);
+      } else if (prevState.contacts.some(item => item.number === number)) {
+        alert(`${number} is already in contacts`);
       } else {
         return {
-          ...prevState,
           contacts: [...prevState.contacts, { id: nanoid(), name, number }],
         };
       }
     });
+  };
+  filteredContacts = () => {
+    const normalisedFilter = this.state.filter.toLowerCase();
+    return this.state.contacts.filter(item =>
+      item.name.toLowerCase().includes(normalisedFilter)
+    );
   };
   deleteContact = id => {
     this.setState({
@@ -38,10 +49,7 @@ export class App extends Component {
     });
   };
   render() {
-    const normalisedFilter = this.state.filter.toLowerCase();
-    const filteredContacts = this.state.contacts.filter(item =>
-      item.name.toLowerCase().includes(normalisedFilter)
-    );
+    const filteredContacts = this.filteredContacts();
     return (
       <Container>
         <Section title="Add contact" className="aside">
